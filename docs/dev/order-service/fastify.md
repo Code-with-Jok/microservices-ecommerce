@@ -117,7 +117,7 @@ start();
 
 ---
 
-## 4. Cấu trúc và Quy tắc (Best Practices)
+## 5. Cấu trúc và Quy tắc (Best Practices)
 
 ### Sử dụng TypeScript
 
@@ -125,17 +125,13 @@ Mọi service đều phải kế thừa cấu hình TypeScript chung từ `@repo
 
 ```json
 {
-  "extends": "@repo/typescript-config/base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src"
-  }
+  "extends": "@repo/typescript-config/base.json"
 }
 ```
 
 ---
 
-## 5. Lưu ý cho Intern
+## 6. Lưu ý cho Intern
 
 - **Đừng dùng `console.log`**: Hãy dùng `fastify.log.info()` hoặc `fastify.log.error()`.
 - **Validation là bắt buộc**: Luôn viết `schema` cho các route nhận dữ liệu từ client. Đây là lớp bảo vệ đầu tiên của hệ thống chúng ta.
