@@ -3,7 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./*": "./src/*.tsx"
+    "./shadcn.css": "./src/shadcn.css",
+    "./components/*": {
+      "types": "./dist/src/components/*.d.ts",
+      "import": "./src/components/*.tsx",
+      "default": "./src/components/*.tsx"
+    },
+    "./lib/*": {
+      "types": "./dist/src/lib/*.d.ts",
+      "import": "./src/lib/*.ts",
+      "default": "./src/lib/*.ts"
+    }
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -17,10 +27,17 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9.39.1",
+    "tailwindcss": "^4",
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-slot": "^1.1.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.474.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.0.1"
   }
 }
