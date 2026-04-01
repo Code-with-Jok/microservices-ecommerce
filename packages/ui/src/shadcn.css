@@ -1,33 +1,64 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: oklch(1 0 0);
-  --color-foreground: oklch(0.145 0 0);
+  /* Brand Colors (Emerald) */
+  --color-brand-emerald-50: oklch(0.98 0.01 150);
+  --color-brand-emerald-100: oklch(0.96 0.03 150);
+  --color-brand-emerald-500: oklch(0.64 0.17 150);
+  --color-brand-emerald-600: oklch(0.55 0.16 150);
+  --color-brand-emerald-700: oklch(0.45 0.14 150);
+
+  /* Light Theme */
+  --color-background: oklch(0.99 0.005 240);
+  --color-foreground: oklch(0.15 0.02 240);
   --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.145 0 0);
+  --color-card-foreground: oklch(0.15 0.02 240);
   --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.145 0 0);
-  --color-primary: oklch(0.205 0 0);
-  --color-primary-foreground: oklch(0.985 0 0);
-  --color-secondary: oklch(0.967 0 0);
-  --color-secondary-foreground: oklch(0.205 0 0);
-  --color-muted: oklch(0.967 0 0);
-  --color-muted-foreground: oklch(0.556 0 0);
-  --color-accent: oklch(0.967 0 0);
-  --color-accent-foreground: oklch(0.205 0 0);
-  --color-destructive: oklch(0.577 0.245 27.325);
-  --color-destructive-foreground: oklch(0.985 0 0);
-  --color-border: oklch(0.922 0 0);
-  --color-input: oklch(0.922 0 0);
-  --color-ring: oklch(0.708 0 0);
-  --color-chart-1: oklch(0.646 0.222 41.116);
-  --color-chart-2: oklch(0.6 0.118 184.704);
-  --color-chart-3: oklch(0.398 0.07 227.392);
-  --color-chart-4: oklch(0.828 0.189 84.429);
-  --color-chart-5: oklch(0.769 0.188 70.08);
-  --radius-lg: 0.5rem;
-  --radius-md: calc(0.5rem - 2px);
-  --radius-sm: calc(0.5rem - 4px);
+  --color-popover-foreground: oklch(0.15 0.02 240);
+  --color-primary: oklch(0.55 0.16 150); /* Emerald-600 */
+  --color-primary-foreground: oklch(0.99 0 0);
+  --color-secondary: oklch(0.92 0.01 240);
+  --color-secondary-foreground: oklch(0.2 0.02 240);
+  --color-muted: oklch(0.94 0.01 240);
+  --color-muted-foreground: oklch(0.45 0.02 240);
+  --color-accent: oklch(0.94 0.02 150);
+  --color-accent-foreground: oklch(0.3 0.1 150);
+  --color-destructive: oklch(0.55 0.2 25);
+  --color-destructive-foreground: oklch(0.99 0 0);
+  --color-border: oklch(0.9 0.01 240);
+  --color-input: oklch(0.9 0.01 240);
+  --color-ring: oklch(0.64 0.17 150);
+  --color-chart-1: oklch(0.64 0.17 150);
+  --color-chart-2: oklch(0.6 0.12 185);
+  --color-chart-3: oklch(0.4 0.07 227);
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.25rem;
+
+  /* Custom Utilities */
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.dark {
+  --color-background: oklch(0.12 0.01 240);
+  --color-foreground: oklch(0.98 0.005 240);
+  --color-card: oklch(0.15 0.015 240);
+  --color-card-foreground: oklch(0.98 0.005 240);
+  --color-popover: oklch(0.15 0.015 240);
+  --color-popover-foreground: oklch(0.98 0.005 240);
+  --color-primary: oklch(0.64 0.17 150); /* Emerald-500 */
+  --color-primary-foreground: oklch(0.1 0.03 150);
+  --color-secondary: oklch(0.18 0.02 240);
+  --color-secondary-foreground: oklch(0.98 0.005 240);
+  --color-muted: oklch(0.18 0.02 240);
+  --color-muted-foreground: oklch(0.6 0.02 240);
+  --color-accent: oklch(0.2 0.04 150);
+  --color-accent-foreground: oklch(0.8 0.1 150);
+  --color-destructive: oklch(0.5 0.2 25);
+  --color-destructive-foreground: oklch(0.99 0 0);
+  --color-border: oklch(0.22 0.02 240);
+  --color-input: oklch(0.22 0.02 240);
+  --color-ring: oklch(0.64 0.17 150);
 }
 
 @layer base {
@@ -35,6 +66,21 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-background/70 backdrop-blur-md border border-white/10 shadow-glass;
+  }
+  .dark .glass {
+    @apply bg-black/40 backdrop-blur-md border border-white/5;
+  }
+  .gradient-mesh {
+    background-image: radial-gradient(at 0% 0%, oklch(0.7 0.15 150 / 0.15) 0px, transparent 50%),
+                      radial-gradient(at 100% 0%, oklch(0.6 0.15 180 / 0.15) 0px, transparent 50%),
+                      radial-gradient(at 100% 100%, oklch(0.5 0.15 220 / 0.1) 0px, transparent 50%),
+                      radial-gradient(at 0% 100%, oklch(0.8 0.15 130 / 0.1) 0px, transparent 50%);
   }
 }
