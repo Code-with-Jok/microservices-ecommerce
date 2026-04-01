@@ -12,7 +12,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${PORT}/api/v1`,
+        url: `${process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`}/api/v1`,
+        description: "API Server",
       },
     ],
   },

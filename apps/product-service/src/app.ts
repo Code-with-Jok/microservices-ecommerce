@@ -9,10 +9,23 @@ import rootRouter from "./routes/index.js";
 
 const app: Express = express();
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
+  "http://localhost:3000",
+  "http://localhost:8000",
+  "http://localhost:8001",
+  "http://localhost:8002",
+];
+
 // Global Middlewares
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );

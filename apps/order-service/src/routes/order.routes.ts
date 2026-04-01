@@ -45,7 +45,16 @@ const orderRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
             type: "object",
             properties: {
               message: { type: "string" },
-              user: { type: "object", additionalProperties: true },
+              user: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  firstName: { type: "string", nullable: true },
+                  lastName: { type: "string", nullable: true },
+                  emailAddress: { type: "string", nullable: true },
+                  profileImageUrl: { type: "string", nullable: true },
+                },
+              },
             },
           },
           401: {
@@ -73,9 +82,17 @@ const orderRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 
         const user = await clerkClient.users.getUser(userId!);
 
+        const userDTO = {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          emailAddress: user.emailAddresses[0]?.emailAddress,
+          profileImageUrl: user.imageUrl,
+        };
+
         return {
           message: "Order service authenticated",
-          user,
+          user: userDTO,
         };
       } catch (error) {
         fastify.log.error(error);

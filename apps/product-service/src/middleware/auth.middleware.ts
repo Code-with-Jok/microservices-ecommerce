@@ -20,7 +20,10 @@ export const shouldBeUser = (
   const userId = auth.userId;
 
   if (!userId) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({
+      error: "Unauthorized",
+      message: "User not authenticated",
+    });
   }
 
   req.userId = userId;

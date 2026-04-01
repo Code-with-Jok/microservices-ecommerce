@@ -1,25 +1,9 @@
 import { Hono } from "hono";
-import { shouldBeUser } from "../middleware/auth.middleware.js";
+import paymentRoutes from "./payment.routes.js";
 
 const rootRouter = new Hono<{ Variables: { userId: string } }>();
 
-// Public Route: Health Check
-rootRouter.get("/health", (c) => {
-  return c.json({
-    status: "ok",
-    uptime: process.uptime(),
-    timestamp: Date.now(),
-  });
-});
-
-// Private Route: Protected Endpoint
-rootRouter.get("/protected", shouldBeUser, (c) => {
-  const userId = c.get("userId");
-
-  return c.json({
-    message: "Payment service authenticated",
-    userId,
-  });
-});
+// Mount Payment Routes
+rootRouter.route("/", paymentRoutes);
 
 export default rootRouter;

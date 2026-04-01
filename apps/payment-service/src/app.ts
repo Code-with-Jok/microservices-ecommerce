@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { swaggerUI } from "@hono/swagger-ui";
 
@@ -7,7 +8,26 @@ import rootRouter from "./routes/index.js";
 
 const app = new Hono();
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
+  "http://localhost:3000",
+  "http://localhost:8000",
+  "http://localhost:8001",
+  "http://localhost:8002",
+];
+
 // Global Middlewares
+app.use(
+  "*",
+  cors({
+    origin: (origin) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return origin;
+      }
+      return null;
+    },
+    credentials: true,
+  })
+);
 app.use("*", clerkMiddleware());
 
 // Swagger Documentation

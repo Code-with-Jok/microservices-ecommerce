@@ -39,14 +39,36 @@ export const openApiDefinition = {
       get: {
         summary: "Protected payment endpoint",
         tags: ["auth"],
+        security: [{ ClerkAuth: [] }],
         responses: {
           200: {
             description: "Authenticated successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    message: { type: "string" },
+                    userId: { type: "string" },
+                  },
+                },
+              },
+            },
           },
           401: {
             description: "Unauthorized",
           },
         },
+      },
+    },
+  },
+  components: {
+    securitySchemes: {
+      ClerkAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "Clerk session token",
       },
     },
   },
