@@ -5,12 +5,12 @@
   "exports": {
     "./shadcn.css": "./src/shadcn.css",
     "./components/*": {
-      "types": "./src/components/*.tsx",
+      "types": "./dist/src/components/*.d.ts",
       "import": "./src/components/*.tsx",
       "default": "./src/components/*.tsx"
     },
     "./lib/*": {
-      "types": "./src/lib/*.ts",
+      "types": "./dist/src/lib/*.d.ts",
       "import": "./src/lib/*.ts",
       "default": "./src/lib/*.ts"
     }
