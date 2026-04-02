@@ -24,7 +24,12 @@ export const createCategory = async (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      return res.status(400).json({ message: "Category already exists" });
+      const target = (error.meta?.target as string[]) || [];
+      const field = target.join(", ");
+      return res.status(400).json({
+        message: `Category ${field || "already"} exists`,
+        field: field,
+      });
     }
     next(error);
   }
@@ -59,11 +64,18 @@ export const updateCategory = async (
       data: updatedCategory,
     });
   } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
-      return res.status(404).json({ message: "Category not found" });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      if (error.code === "P2002") {
+        const target = (error.meta?.target as string[]) || [];
+        const field = target.join(", ");
+        return res.status(400).json({
+          message: `Unique constraint violation: ${field || "Slug"} already exists`,
+          field: field,
+        });
+      }
     }
     next(error);
   }
@@ -95,11 +107,15 @@ export const deleteCategory = async (
       data: deletedCategory,
     });
   } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
-      return res.status(404).json({ message: "Category not found" });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      if (error.code === "P2003") {
+        return res.status(409).json({
+          message: "Category has associated products and cannot be deleted",
+        });
+      }
     }
     next(error);
   }
