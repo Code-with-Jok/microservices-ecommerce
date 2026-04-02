@@ -20,7 +20,7 @@ CREATE TABLE "Product" (
     "name" TEXT NOT NULL,
     "shortDescription" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "price" INTEGER NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
     "sizes" TEXT[],
     "colors" TEXT[],
     "images" JSONB NOT NULL,

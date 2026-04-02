@@ -27,21 +27,56 @@ export const createProduct = async (
   next: NextFunction
 ) => {
   try {
-    const data: Prisma.ProductCreateInput = req.body;
-    const { colors, images } = data;
+    const { 
+      name, 
+      shortDescription, 
+      description, 
+      price, 
+      categorySlug, 
+      colors, 
+      images,
+      sizes 
+    } = req.body;
+
+    // Explicit validation for required fields
+    if (!name || !shortDescription || !description || price === undefined || !categorySlug) {
+      return res.status(400).json({ 
+        message: "Missing required fields: name, shortDescription, description, price, and categorySlug are required." 
+      });
+    }
 
     const validationError = validateColorsAndImages(colors as string[], images);
     if (validationError) {
       return res.status(400).json({ message: validationError });
     }
 
-    const product = await prisma.product.create({ data });
+    // Explicitly construct create input to ensure it matches Prisma's expectation
+    const product = await prisma.product.create({ 
+      data: {
+        name,
+        shortDescription,
+        description,
+        price: Number(price),
+        sizes: sizes || [],
+        colors: colors || [],
+        images: images || {},
+        category: {
+          connect: { slug: categorySlug }
+        }
+      }
+    });
 
     return res.status(201).json({
       message: "Product created successfully",
       data: product,
     });
   } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(400).json({ message: "Category not found for the provided slug" });
+    }
     next(error);
   }
 };
@@ -53,23 +88,48 @@ export const updateProduct = async (
 ) => {
   try {
     const { id } = req.params;
-    const data: Prisma.ProductUpdateInput = req.body;
+    const productId = Number(id);
 
-    if (data.colors || data.images) {
-      if (Array.isArray(data.colors) && data.images) {
-        const validationError = validateColorsAndImages(
-          data.colors as string[],
-          data.images
-        );
-        if (validationError) {
-          return res.status(400).json({ message: validationError });
-        }
+    if (isNaN(productId)) {
+      return res.status(400).json({ message: "Invalid product id" });
+    }
+
+    const body = req.body;
+
+    // Merge logic for colors and images if either is provided
+    if (body.colors || body.images) {
+      const existingProduct = await prisma.product.findUnique({
+        where: { id: productId },
+      });
+
+      if (!existingProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      const mergedColors = (body.colors as string[]) || (existingProduct.colors as string[]);
+      const mergedImages = (body.images as any) || (existingProduct.images as any);
+
+      const validationError = validateColorsAndImages(mergedColors, mergedImages);
+      if (validationError) {
+        return res.status(400).json({ message: validationError });
       }
     }
 
+    // If categorySlug is in body, use connect logic
+    const updateData: any = { ...body };
+    if (body.categorySlug) {
+      updateData.category = {
+        connect: { slug: body.categorySlug }
+      };
+      delete updateData.categorySlug;
+    }
+    if (body.price) {
+      updateData.price = Number(body.price);
+    }
+
     const updatedProduct = await prisma.product.update({
-      where: { id: Number(id) },
-      data,
+      where: { id: productId },
+      data: updateData,
     });
 
     return res.status(200).json({
@@ -81,7 +141,7 @@ export const updateProduct = async (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2025"
     ) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "Product or Category not found" });
     }
     next(error);
   }
@@ -94,9 +154,14 @@ export const deleteProduct = async (
 ) => {
   try {
     const { id } = req.params;
+    const productId = Number(id);
+
+    if (isNaN(productId)) {
+      return res.status(400).json({ message: "Invalid product id" });
+    }
 
     const deletedProduct = await prisma.product.delete({
-      where: { id: Number(id) },
+      where: { id: productId },
     });
 
     return res.status(200).json({
@@ -121,9 +186,14 @@ export const getProduct = async (
 ) => {
   try {
     const { id } = req.params;
+    const productId = Number(id);
+
+    if (isNaN(productId)) {
+      return res.status(400).json({ message: "Invalid product id" });
+    }
 
     const product = await prisma.product.findUnique({
-      where: { id: Number(id) },
+      where: { id: productId },
     });
 
     if (!product) {

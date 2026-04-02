@@ -45,7 +45,7 @@ Hệ thống sử dụng các Model chính sau trong `schema.prisma`:
 -   **ID**: Tự động tăng.
 -   **Price**: Kiểu `Float` (để hỗ trợ các giá trị số thực như 39.9).
 -   **Colors & Images**: Lưu trữ theo cơ chế ánh xạ (Mapping). Mỗi màu sắc sẽ tương ứng với một danh sách URL hình ảnh.
--   **Category**: Mối quan hệ tùy chọn (`categorySlug String?`). Việc thiết kế này giúp dịch vụ có thể hoạt động độc lập ngay cả khi chưa hoàn thiện API Quản lý Danh mục (Category API).
+-   **Category**: Mối quan hệ bắt buộc (`categorySlug String`). Việc thiết kế này đảm bảo tính toàn vẹn dữ liệu, mỗi sản phẩm phải thuộc về một danh mục cụ thể.
 
 ### Category Model
 -   Dùng để phân loại sản phẩm. Gắn kết với Product thông qua `categorySlug`.

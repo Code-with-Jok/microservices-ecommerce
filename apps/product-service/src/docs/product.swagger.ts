@@ -1,6 +1,11 @@
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *   schemas:
  *     Product:
  *       type: object
@@ -12,6 +17,7 @@
  *         - sizes
  *         - colors
  *         - images
+ *         - categorySlug
  *       properties:
  *         id:
  *           type: integer
@@ -49,8 +55,8 @@
  *           }
  *         categorySlug:
  *           type: string
- *           nullable: true
- *           example: null
+ *           nullable: false
+ *           example: "t-shirts"
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -74,6 +80,8 @@
  *   post:
  *     summary: Tạo sản phẩm mới
  *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -143,6 +151,8 @@
  *   put:
  *     summary: Cập nhật thông tin sản phẩm
  *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -175,6 +185,8 @@
  *   delete:
  *     summary: Xóa sản phẩm
  *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
