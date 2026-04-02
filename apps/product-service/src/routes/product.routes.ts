@@ -1,24 +1,16 @@
 import { Router } from "express";
+import {
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+  getProduct,
+  updateProduct,
+} from "../controllers/product.controller.js";
 
 const router: Router = Router();
 
-/**
- * @openapi
- * /api/v1/products:
- *   get:
- *     summary: Get all products
- *     responses:
- *       200:
- *         description: Returns a list of products
- */
-router.get("/", (req, res) => {
-  res.json({
-    message: "Sản phẩm được lấy thành công",
-    products: [
-      { id: 1, name: "Sản phẩm 1", price: 100 },
-      { id: 2, name: "Sản phẩm 2", price: 200 },
-    ],
-  });
-});
+router.route("/").post(createProduct).get(getAllProducts);
+
+router.route("/:id").get(getProduct).put(updateProduct).delete(deleteProduct);
 
 export default router;

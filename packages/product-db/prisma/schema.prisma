@@ -18,14 +18,14 @@ model Product {
   name             String
   shortDescription String
   description      String
-  price            Int
+  price            Float
   sizes            String[]
   colors           String[]
   images           Json
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  categorySlug     String
-  category         Category @relation(fields: [categorySlug], references: [slug])
+  categorySlug     String?
+  category         Category? @relation(fields: [categorySlug], references: [slug])
 
   @@index([categorySlug])
 }
