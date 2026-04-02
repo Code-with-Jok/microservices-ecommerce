@@ -55,10 +55,7 @@ export const updateProduct = async (
     const { id } = req.params;
     const data: Prisma.ProductUpdateInput = req.body;
 
-    // Optional: Validation if colors or images are provided in the update
     if (data.colors || data.images) {
-      // Need to fetch current data to validate full set if only partial set is updated
-      // For simplicity, we just check if both are provided in the body for now
       if (Array.isArray(data.colors) && data.images) {
         const validationError = validateColorsAndImages(
           data.colors as string[],
