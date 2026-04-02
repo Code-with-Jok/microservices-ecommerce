@@ -18,7 +18,7 @@ model Product {
   name             String
   shortDescription String
   description      String
-  price            Int
+  price            Float
   sizes            String[]
   colors           String[]
   images           Json

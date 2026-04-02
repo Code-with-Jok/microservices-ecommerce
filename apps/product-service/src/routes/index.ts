@@ -1,11 +1,15 @@
 import { Request, Response, Router } from "express";
 import productRoutes from "./product.routes.js";
+import categoryRoutes from "./category.routes.js";
 import { shouldBeUser } from "../middleware/auth.middleware.js";
 
 const rootRouter: Router = Router();
 
 // product routes
 rootRouter.use("/products", productRoutes);
+
+// category routes
+rootRouter.use("/categories", categoryRoutes);
 
 /**
  * @openapi
