@@ -10,12 +10,8 @@ import { shouldBeUser } from "../middleware/auth.middleware.js";
 
 const router: Router = Router();
 
-router.route("/").post(shouldBeUser, createProduct).get(getAllProducts);
+router.route("/").post(createProduct).get(getAllProducts);
 
-router
-  .route("/:id")
-  .get(getProduct)
-  .put(shouldBeUser, updateProduct)
-  .delete(shouldBeUser, deleteProduct);
+router.route("/:id").get(getProduct).put(updateProduct).delete(deleteProduct);
 
 export default router;
