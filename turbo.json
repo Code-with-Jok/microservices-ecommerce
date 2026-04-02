@@ -20,7 +20,12 @@
       "persistent": true
     },
     "db:generate": {
-      "inputs": ["prisma/schema.prisma"],
+      "inputs": [
+        "prisma/schema.prisma",
+        "prisma.config.ts",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
       "outputs": ["generated/**"],
       "cache": true
     },
