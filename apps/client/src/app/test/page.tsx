@@ -2,7 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 
 const Test = async () => {
   const { getToken } = await auth();
-  const token = await getToken();
+  const token = await getToken({
+    template: process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE,
+  });
   if (!token) {
     return (
       <div className="p-4 border border-yellow-500 bg-yellow-50 text-yellow-700 rounded-md">
@@ -54,7 +56,6 @@ const Test = async () => {
     return (
       <div className="p-6 space-y-6">
         <h1 className="text-2xl font-bold">Kết quả kiểm tra Microservices</h1>
-        <p>{token}</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {Object.entries(results).map(([name, result]) => (
             <div

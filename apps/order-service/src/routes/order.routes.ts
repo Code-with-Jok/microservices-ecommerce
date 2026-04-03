@@ -20,7 +20,7 @@ import { shouldBeUser } from "../middleware/auth.hook.js";
 const orderRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   await fastify.register(healthRouter);
   await fastify.register(protectedRouter);
-  await fastify.register(orderRouter);
+  await fastify.register(orderRouter, { prefix: "/orders" });
 };
 
 /**
@@ -49,10 +49,10 @@ const protectedRouter: FastifyPluginAsync = async (fastify) => {
 const orderRouter: FastifyPluginAsync = async (fastify) => {
   /**
    * Private: User order router
-   * Get /api/v1/user-order
+   * Get /api/v1/orders/user
    */
   fastify.get(
-    "/user-order",
+    "/user",
     {
       schema: userOrderSchema,
       preHandler: [shouldBeUser],
@@ -65,7 +65,7 @@ const orderRouter: FastifyPluginAsync = async (fastify) => {
    * Post /api/v1/orders/create
    */
   fastify.post(
-    "/orders/create",
+    "/create",
     {
       schema: createOrderSchema,
       preHandler: [shouldBeUser],
@@ -78,7 +78,7 @@ const orderRouter: FastifyPluginAsync = async (fastify) => {
    * Get /api/v1/orders
    */
   fastify.get(
-    "/orders",
+    "/",
     {
       schema: allOrdersSchema,
       preHandler: [shouldBeUser],
@@ -88,6 +88,7 @@ const orderRouter: FastifyPluginAsync = async (fastify) => {
 
   /**
    * Private: Get order chart data
+   * Get /api/v1/order-chart
    */
   fastify.get(
     "/order-chart",
