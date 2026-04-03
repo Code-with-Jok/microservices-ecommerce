@@ -2,8 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 
 const Test = async () => {
   const { getToken } = await auth();
-  const token = await getToken();
-
+  const token = await getToken({
+    template: process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE,
+  });
   if (!token) {
     return (
       <div className="p-4 border border-yellow-500 bg-yellow-50 text-yellow-700 rounded-md">
@@ -14,16 +15,23 @@ const Test = async () => {
   }
 
   try {
+    const productServiceUrl =
+      process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || "http://localhost:8000";
+    const orderServiceUrl =
+      process.env.NEXT_PUBLIC_ORDER_SERVICE_URL || "http://localhost:8001";
+    const paymentServiceUrl =
+      process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL || "http://localhost:8002";
+
     const [res, resOrder, resPayment] = await Promise.all([
-      fetch("http://localhost:8000/api/v1/protected", {
+      fetch(`${productServiceUrl}/api/v1/protected`, {
         cache: "no-store",
         headers: { Authorization: `Bearer ${token}` },
       }),
-      fetch("http://localhost:8001/api/v1/protected", {
+      fetch(`${orderServiceUrl}/api/v1/protected`, {
         cache: "no-store",
         headers: { Authorization: `Bearer ${token}` },
       }),
-      fetch("http://localhost:8002/api/v1/protected", {
+      fetch(`${paymentServiceUrl}/api/v1/protected`, {
         cache: "no-store",
         headers: { Authorization: `Bearer ${token}` },
       }),
@@ -55,7 +63,6 @@ const Test = async () => {
     return (
       <div className="p-6 space-y-6">
         <h1 className="text-2xl font-bold">Kết quả kiểm tra Microservices</h1>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {Object.entries(results).map(([name, result]) => (
             <div

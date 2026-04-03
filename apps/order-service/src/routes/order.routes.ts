@@ -1,104 +1,102 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
-import { clerkClient } from "@clerk/fastify";
+import {
+  healthSchema,
+  protectedSchema,
+  userOrderSchema,
+  allOrdersSchema,
+  orderChartSchema,
+  createOrderSchema,
+} from "../schemas/order.schema.js";
+import {
+  createOrderHandler,
+  getHealthHandler,
+  getOrderChartHandler,
+  getOrdersHandler,
+  getProtectedOrderHandler,
+  getUserOrderHandler,
+} from "../controllers/order.controller.js";
 import { shouldBeUser } from "../middleware/auth.hook.js";
 
 const orderRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-  // Public Route: Health Check
-  fastify.get(
-    "/health",
-    {
-      schema: {
-        description: "Get service health status",
-        tags: ["health"],
-        response: {
-          200: {
-            description: "Successful response",
-            type: "object",
-            properties: {
-              status: { type: "string" },
-              uptime: { type: "number" },
-              timestamp: { type: "number" },
-            },
-          },
-        },
-      },
-    },
-    async () => {
-      return {
-        status: "ok",
-        uptime: process.uptime(),
-        timestamp: Date.now(),
-      };
-    }
-  );
+  await fastify.register(healthRouter);
+  await fastify.register(protectedRouter);
+  await fastify.register(orderRouter, { prefix: "/orders" });
+};
 
-  // Private Route: Protected Endpoint
+/**
+ * Public: Health router
+ * Get /api/v1/health
+ */
+const healthRouter: FastifyPluginAsync = async (fastify) => {
+  fastify.get("/health", { schema: healthSchema }, getHealthHandler);
+};
+
+/**
+ * Private: Protected router
+ * Get /api/v1/protected
+ */
+const protectedRouter: FastifyPluginAsync = async (fastify) => {
   fastify.get(
     "/protected",
     {
-      schema: {
-        description: "Protected order endpoint",
-        tags: ["auth"],
-        response: {
-          200: {
-            description: "Authenticated successfully",
-            type: "object",
-            properties: {
-              message: { type: "string" },
-              user: {
-                type: "object",
-                properties: {
-                  id: { type: "string" },
-                  firstName: { type: "string", nullable: true },
-                  lastName: { type: "string", nullable: true },
-                  emailAddress: { type: "string", nullable: true },
-                  profileImageUrl: { type: "string", nullable: true },
-                },
-              },
-            },
-          },
-          401: {
-            description: "Unauthorized",
-            type: "object",
-            properties: {
-              error: { type: "string" },
-              message: { type: "string" },
-            },
-          },
-          500: {
-            description: "Internal Server Error",
-            type: "object",
-            properties: {
-              error: { type: "string" },
-            },
-          },
-        },
-      },
+      schema: protectedSchema,
       preHandler: [shouldBeUser],
     },
-    async (request, reply) => {
-      try {
-        const { userId } = request;
+    getProtectedOrderHandler
+  );
+};
 
-        const user = await clerkClient.users.getUser(userId!);
+const orderRouter: FastifyPluginAsync = async (fastify) => {
+  /**
+   * Private: User order router
+   * Get /api/v1/orders/user
+   */
+  fastify.get(
+    "/user",
+    {
+      schema: userOrderSchema,
+      preHandler: [shouldBeUser],
+    },
+    getUserOrderHandler
+  );
 
-        const userDTO = {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          emailAddress: user.emailAddresses[0]?.emailAddress,
-          profileImageUrl: user.imageUrl,
-        };
+  /**
+   * Private: Create a new order
+   * Post /api/v1/orders/create
+   */
+  fastify.post(
+    "/create",
+    {
+      schema: createOrderSchema,
+      preHandler: [shouldBeUser],
+    },
+    createOrderHandler
+  );
 
-        return {
-          message: "Order service authenticated",
-          user: userDTO,
-        };
-      } catch (error) {
-        fastify.log.error(error);
-        return reply.code(500).send({ error: "Failed to retrieve user" });
-      }
-    }
+  /**
+   * Private: Get all orders
+   * Get /api/v1/orders
+   */
+  fastify.get(
+    "/",
+    {
+      schema: allOrdersSchema,
+      preHandler: [shouldBeUser],
+    },
+    getOrdersHandler
+  );
+
+  /**
+   * Private: Get order chart data
+   * Get /api/v1/order-chart
+   */
+  fastify.get(
+    "/order-chart",
+    {
+      schema: orderChartSchema,
+      preHandler: [shouldBeUser],
+    },
+    getOrderChartHandler
   );
 };
 
