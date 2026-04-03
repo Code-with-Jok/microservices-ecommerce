@@ -15,16 +15,23 @@ const Test = async () => {
   }
 
   try {
+    const productServiceUrl =
+      process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || "http://localhost:8000";
+    const orderServiceUrl =
+      process.env.NEXT_PUBLIC_ORDER_SERVICE_URL || "http://localhost:8001";
+    const paymentServiceUrl =
+      process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL || "http://localhost:8002";
+
     const [res, resOrder, resPayment] = await Promise.all([
-      fetch("http://localhost:8000/api/v1/protected", {
+      fetch(`${productServiceUrl}/api/v1/protected`, {
         cache: "no-store",
         headers: { Authorization: `Bearer ${token}` },
       }),
-      fetch("http://localhost:8001/api/v1/protected", {
+      fetch(`${orderServiceUrl}/api/v1/protected`, {
         cache: "no-store",
         headers: { Authorization: `Bearer ${token}` },
       }),
-      fetch("http://localhost:8002/api/v1/protected", {
+      fetch(`${paymentServiceUrl}/api/v1/protected`, {
         cache: "no-store",
         headers: { Authorization: `Bearer ${token}` },
       }),

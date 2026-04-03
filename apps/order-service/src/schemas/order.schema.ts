@@ -100,7 +100,7 @@ export const userOrderSchema: FastifySchema = {
 };
 
 export const allOrdersSchema: FastifySchema = {
-  description: "Lấy toàn bộ đơn hàng trong hệ thống (Yêu cầu quyền Admin)",
+  description: "Lấy toàn bộ đơn hàng trong hệ thống (Yêu cầu đăng nhập)",
   tags: ["orders"],
   security: [{ bearerAuth: [] }],
   querystring: {
@@ -108,8 +108,10 @@ export const allOrdersSchema: FastifySchema = {
     properties: {
       limit: { 
         type: "integer", 
+        minimum: 1,
+        maximum: 100,
         default: 10,
-        description: "Số lượng đơn hàng tối đa cần lấy (Mặc định: 10)"
+        description: "Số lượng đơn hàng tối đa cần lấy (1-100, Mặc định: 10)"
       },
     },
     example: {
@@ -196,7 +198,7 @@ export const createOrderSchema: FastifySchema = {
           userId: "user_2pX...",
           email: "customer@example.com",
           amount: 250.0,
-          status: "pending",
+          status: "success",
           products: [
             { name: "iPhone 15 Pro", quantity: 1, price: 200.0 },
             { name: "Protective Case", quantity: 2, price: 25.0 },

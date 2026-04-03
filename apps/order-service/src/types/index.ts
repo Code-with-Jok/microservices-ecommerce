@@ -1,6 +1,6 @@
 import { OrderSchemaType } from "@repo/order-db";
 
-export type OrderType = OrderSchemaType & {
+export type OrderType = Omit<OrderSchemaType, "_id"> & {
   _id: string;
 };
 

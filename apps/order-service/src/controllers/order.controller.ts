@@ -53,7 +53,9 @@ export const getUserOrderHandler = async (
   reply: FastifyReply
 ) => {
   try {
-    const orders = await Order.find({ userId: request.userId });
+    const { userId } = request;
+
+    const orders = await Order.find({ userId });
 
     return reply.code(200).send({
       message: "User orders retrieved successfully",
@@ -75,12 +77,13 @@ export const createOrderHandler = async (
       return reply.code(401).send({ error: "Unauthorized" });
     }
 
-    const orderData = request.body as OrderSchemaType;
+    const { status: _status, ...restOfOrderData } =
+      request.body as OrderSchemaType;
 
     const newOrder = new Order({
-      ...orderData,
+      ...restOfOrderData,
       userId,
-      status: orderData.status || "success",
+      status: "success",
     });
 
     await newOrder.save();
@@ -119,7 +122,9 @@ export const getOrderChartHandler = async (
 ) => {
   try {
     const now = new Date();
-    const sixMonthsAgo = startOfMonth(subMonths(now, 5));
+    const sixMonthsAgo = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 5, 1)
+    );
 
     const raw = await Order.aggregate([
       {
@@ -179,9 +184,11 @@ export const getOrderChartHandler = async (
     const results: OrderChartType[] = [];
 
     for (let i = 5; i >= 0; i--) {
-      const d = subMonths(now, i);
-      const year = d.getFullYear();
-      const month = d.getMonth() + 1;
+      const d = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1)
+      );
+      const year = d.getUTCFullYear();
+      const month = d.getUTCMonth() + 1;
 
       const match = raw.find(
         (item) => item.year === year && item.month === month
