@@ -12,7 +12,9 @@ export const shouldBeUser = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
+  const headers = request.headers;
   const { isAuthenticated, userId } = getAuth(request);
+  console.log({ headers, isAuthenticated, userId });
 
   if (!isAuthenticated || !userId) {
     return reply.code(401).send({

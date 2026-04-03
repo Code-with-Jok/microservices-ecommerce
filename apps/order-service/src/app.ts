@@ -10,13 +10,16 @@ import rootRouter from "./routes/index.js";
 const createApp = async (): Promise<FastifyInstance> => {
   const fastify = Fastify({
     logger: true,
+    ajv: {
+      customOptions: {
+        // Cho phép sử dụng từ khóa 'example' (OpenAPI) trong JSON Schema mà không bị lỗi strict mode
+        keywords: ["example"],
+      },
+    },
   });
 
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "http://localhost:8001",
-    "http://localhost:8002",
+    "http://localhost:3002",
   ];
 
   // Global Middlewares/Plugins
