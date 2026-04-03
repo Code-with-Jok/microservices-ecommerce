@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@repo/order-db": "workspace:*",
     "@types/node": "^22.15.3",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
