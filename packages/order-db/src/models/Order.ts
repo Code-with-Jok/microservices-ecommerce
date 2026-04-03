@@ -12,8 +12,16 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    amount: { type: Number, required: true },
-    status: { type: String, required: true, enum: OrderStatus },
+    amount: { 
+      type: Number, 
+      required: true,
+      min: [0, "Amount cannot be negative"] 
+    },
+    status: { 
+      type: String, 
+      required: true, 
+      enum: OrderStatus 
+    },
     products: {
       type: [
         {
@@ -24,14 +32,22 @@ const OrderSchema = new mongoose.Schema(
           quantity: {
             type: Number,
             required: true,
+            min: [1, "Quantity must be at least 1"]
           },
           price: {
             type: Number,
             required: true,
+            min: [0, "Item price cannot be negative"]
           },
         },
       ],
-      required: true,
+      required: [true, "Order must contain at least one product"],
+      validate: {
+        validator: function (v: any[]) {
+          return v && v.length > 0;
+        },
+        message: "Order items list cannot be empty"
+      }
     },
   },
   { timestamps: true }
@@ -39,4 +55,5 @@ const OrderSchema = new mongoose.Schema(
 
 export type OrderSchemaType = InferSchemaType<typeof OrderSchema>;
 
-export const Order = mongoose.model<OrderSchemaType>("Order", OrderSchema);
+// Tránh OverwriteModelError bằng cách kiểm tra model đã tồn tại trước khi tạo mới
+export const Order = mongoose.models.Order || mongoose.model<OrderSchemaType>("Order", OrderSchema);
